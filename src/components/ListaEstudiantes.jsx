@@ -21,11 +21,12 @@ const ListaEstudiantes = () => {
       <div className="col-md-7 mt-2">
         <div className="card">
           <div className="card-header">Lista de Estudiante</div>
-          <div className="card-body"><strong>Ine:</strong> {estudiantes.ine}</div>
-          <div className="card-body"><strong>Nombre:</strong> {estudiantes.nombre}</div>
-          <div className="card-body"><strong>Apellido paterno:</strong> {estudiantes.apellido}</div>
-          <div className="card-body"><strong>Teléfono:</strong> {estudiantes.telefono}</div>
-          <div className="card-body"><strong>Correo:</strong> {estudiantes.correo}</div>
+          <div className="card-body"></div>
+          <div className="card-body" style={{display: estudiantes.ine ? "initial" : "none"}}><strong>Ine:</strong> {estudiantes.ine}</div>
+          <div className="card-body" style={{display: estudiantes.nombre ? "initial" : "none"}}><strong>Nombre:</strong> {estudiantes.nombre}</div>
+          <div className="card-body" style={{display: estudiantes.apellido ? "initial" : "none"}}><strong>Apellido paterno:</strong> {estudiantes.apellido}</div>
+          <div className="card-body" style={{display: estudiantes.telefono ? "initial" : "none"}}><strong>Teléfono:</strong> {estudiantes.telefono}</div>
+          <div className="card-body" style={{display: estudiantes.correo ? "initial" : "none"}}><strong>Correo:</strong> {estudiantes.correo}</div>
         </div>
       </div>
     );
