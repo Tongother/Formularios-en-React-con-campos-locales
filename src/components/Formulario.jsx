@@ -1,128 +1,149 @@
 import React, { useEffect, useState } from 'react';
- 
-const Formulario = () => {
-  const [estudiante, setEstudiante] = useState({
-    ine: "",
-    nombre: "",
-    apellido: "",
-    telefono: "",
-    correo: "",
-  });
+import Error from './Error';
+
+const Formulario = ({setEstudiantes, estudiantes, estudiante, setEstudiante}) => {
+  const [documento, setDocumento] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [error, setError] = useState(false);
+
+  const enviarFormulario = (e) => {
+    e.preventDefault();
+
+    if([documento, nombre, apellido, telefono, correo].includes("")){
+      setError(true);
+      return;
+    }else{
+      setError(false);
+    }
+
+    const obj = {documento, nombre, apellido, telefono, correo};
+    if(estudiante.id){
+      obj.id = estudiante.id;
+      const otros = estudiantes.map(est => est.id === estudiante.id ? obj : est);
+      setEstudiantes(otros);
+    }else{
+      obj.id = getId();
+      setEstudiantes([...estudiantes, obj]);
+    }
+
+    limpiarCampos();
+  }
+
+  const getId = () => {
+    let id = (Math.random().toString(36).substr(2) + Math.random().toString(36).substring(2) + Date.now().toString(36));
+    return id;
+  }
+
+  const limpiarCampos = () => {
+    setDocumento("");
+    setNombre("");
+    setApellido("");
+    setTelefono("");
+    setCorreo("");
+    setEstudiante({});
+  }
 
   useEffect(() => {
-    try{
-      const data = new URLSearchParams(window.location.search).get("data"); 
-      if(data !== null){
-        const { ine, nombre, apellido, telefono, correo } = JSON.parse(data);
-        setEstudiante({ ine, nombre, apellido, telefono, correo });
-      }  
-    }catch(e){
-      console.log("Ocurrio un problema al obtener los datos");
+    if(estudiante.id && estudiante.id !== ""){
+      setDocumento(estudiante.documento);
+      setNombre(estudiante.nombre);
+      setApellido(estudiante.apellido);
+      setTelefono(estudiante.telefono);
+      setCorreo(estudiante.correo);
     }
-  }, []);
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setEstudiante({ ...estudiante, [name]: value });
-  }
-
-  const reset = () => {
-    setEstudiante({
-      ine: "",
-      nombre: "",
-      apellido: "",
-      telefono: "",
-      correo: "",
-    });
-  }
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    window.location.href = `http://localhost:5173/?data=${JSON.stringify(estudiante)}`;
-  }
+  }, [estudiante]);
 
     return (
-<form onSubmit={onSubmit}>
-      <div className="col-md-5 mt-2"></div>
-      <div className="card">
-        <div className="card-header">Formulario</div>
-        <div className="card-body">
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Num. Ine:
-            </span>
-            <input
-              type="text"
-              name="ine"
-              className="form-control"
-              value={estudiante.ine}
-              onChange={onChange}
-              required
-            />
+      <div className='col-md-5 mt-2'>
+        <form onSubmit={enviarFormulario}>
+          <div className='card' style={{backgroundColor: "#2f2f2f"}}>
+            <div className='card-header' style={{color: "white"}}>Formulario</div>
+            { error && <Error otra="mas props" mensaje="Los campos son obligatorios"/> }
+            <div className='card-body'>
+              <div className='input-group mb-3'>
+                <span className='input-group-text' id='basic-addon1'>
+                  Documento:
+                </span>
+                <input
+                  type='number'
+                  className='form-control'
+                  value={documento}
+                  required
+                  onChange={(e) => setDocumento(e.target.value)}
+                  style={{backgroundColor: "#3f3f3f", color: "white"}}
+                />
+              </div>
+              <div className='input-group mb-3'>
+                <span className='input-group-text' id='basic-addon1'>
+                  Nombre:
+                </span>
+                <input
+                  type='text'
+                  className='form-control'
+                  value={nombre}
+                  required
+                  onChange={(e) => setNombre(e.target.value)}
+                  style={{backgroundColor: "#3f3f3f", color: "white"}}
+                />
+              </div>
+              <div className='input-group mb-3'>
+                <span className='input-group-text' id='basic-addon1'>
+                  Apellido:
+                </span>
+                <input
+                  type='text'
+                  className='form-control'
+                  value={apellido}
+                  required
+                  onChange={(e) => setApellido(e.target.value)}
+                  style={{backgroundColor: "#3f3f3f", color: "white"}}
+                />
+              </div>
+              <div className='input-group mb-3'>
+                <span className='input-group-text' id='basic-addon1'>
+                  Teléfono:
+                </span>
+                <input
+                  type='number'
+                  className='form-control'
+                  value={telefono}
+                  required
+                  onChange={(e) => setTelefono(e.target.value)}
+                  style={{backgroundColor: "#3f3f3f", color: "white"}}
+                />
+              </div>
+              <div className='input-group mb-3'>
+                <span className='input-group-text' id='basic-addon1'>
+                  Correo:
+                </span>
+                <input
+                  type='email'
+                  className='form-control'
+                  value={correo}
+                  required
+                  onChange={(e) => setCorreo(e.target.value)}
+                  style={{backgroundColor: "#3f3f3f", color: "white"}}
+                />
+              </div>
+              <div className='d-grid'>
+                <button type='submit' className='btn btn-success'>
+                  {estudiante.id ? "Editar" : "Registrar"}
+                </button>
+                <input 
+                  type='button' 
+                  className='btn btn-warning my-2' 
+                  value='Cancelar' 
+                  onClick={limpiarCampos}
+                />
+              </div>
+            </div>
           </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Nombre:
-            </span>
-            <input
-              type="text"
-              name="nombre"
-              className="form-control"
-              value={estudiante.nombre}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Apellido Paterno:
-            </span>
-            <input
-              type="text"
-              name="apellido"
-              className="form-control"
-              value={estudiante.apellido}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Teléfono:
-            </span>
-            <input
-              type="tel"
-              name="telefono"
-              className="form-control"
-              value={estudiante.telefono}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
-              Correo:
-            </span>
-            <input
-              type="email"
-              name="correo"
-              className="form-control"
-              value={estudiante.correo}
-              onChange={onChange}
-              required
-            />
-          </div>
-          <button type="submit" className="btn btn-success" style={{marginRight: "20px"}}>
-            Enviar
-          </button>
-          <button type="button" className="btn btn-primary" onClick={reset}>
-            Restablecer
-          </button>
-        </div>
+        </form>
       </div>
-    </form>
     );
   }
   
   export default Formulario;
-
